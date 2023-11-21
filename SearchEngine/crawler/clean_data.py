@@ -1,9 +1,11 @@
 '''
-1. 解决部分网页乱码问题
-2. 处理同title不同url的问题
-3. 处理links过多的问题
+1. 解决部分网页乱码问题 √
+2. 处理同title不同url的问题--建索引的时候按title拿，链接分析的时候通过url找到title
+3. 处理links过多的问题 √
+4. 6126-6256同title但内容不同 √
 '''
 
+from collections import defaultdict
 import random
 import mysql_config as db
 import chardet
@@ -40,14 +42,33 @@ def deal_with_same_title():
     pass
 
 
+# 处理同title内容不同情况
+def modify_same_title_content(id_start, id_end):
+    # 从数据库中选取ID在6126至6256之间的记录
+    db.cursor.execute("SELECT id, title FROM page WHERE id BETWEEN %s AND %s", (id_start, id_end))
+    records = db.cursor.fetchall()
+    # 按title分组记录
+    title_dict = defaultdict(list)
+    for record in records:
+        id, title = record
+        title_dict[title].append(id)
+    # 遍历每组记录，按照id排序后，修改title名，在后面添加0、1、2等，让title不同
+    for title, ids in title_dict.items():
+        if len(ids) > 1:
+            ids.sort()
+            for i, id in enumerate(ids):
+                new_title = title + str(i)
+                db.cursor.execute("UPDATE page SET title = %s WHERE id = %s", (new_title, id))
+    db.cnx.commit()
+
+
 # 随机删除一半的links
 def delete_links():
     db.cursor.execute("SELECT id FROM page")
     ids = [record[0] for record in db.cursor.fetchall()]
     
     for id in ids:
-        if id ==1:
-            continue
+        print(f"ID: {id}")
         db.cursor.execute("SELECT links FROM page WHERE id=%s", (id,))
         links = db.cursor.fetchone()[0].split('\n')
         half_len = len(links) // 2
@@ -59,6 +80,7 @@ def delete_links():
     db.cnx.commit()
 
 
+# 统计links数量
 def count_links():
     db.cursor.execute("SELECT id FROM page")
     ids = [record[0] for record in db.cursor.fetchall()]
@@ -72,6 +94,7 @@ def count_links():
     print(f"最大links数量: {max_len}")
 
 
+# 删除links数量大于阈值的记录
 def delete_links_above_threshold(threshold):
     db.cursor.execute("SELECT id FROM page")
     ids = [record[0] for record in db.cursor.fetchall()]
@@ -89,6 +112,7 @@ def delete_links_above_threshold(threshold):
     db.cnx.commit()
 
 
+# 删除links数量小于阈值的记录
 def delete_links_below_threshold(threshold):
     db.cursor.execute("SELECT id FROM page")
     ids = [record[0] for record in db.cursor.fetchall()]
@@ -99,6 +123,8 @@ def delete_links_below_threshold(threshold):
         if len(links) < threshold:
            db.cursor.execute("DELETE FROM page WHERE id =%s", (id,))
 
+
+# 删除重复的url
 def delete_duplicate_urls():
     # 找出重复的url和它们的id
     db.cursor.execute("SELECT url, GROUP_CONCAT(id) FROM page GROUP BY url HAVING COUNT(url) > 1")
@@ -113,7 +139,7 @@ def delete_duplicate_urls():
 
     db.cnx.commit()
 
-
+# 测试编码
 def test_encoding():
     # test
     db.cursor.execute("SELECT title FROM page WHERE id = 1")
@@ -134,6 +160,7 @@ def test_encoding():
         except UnicodeEncodeError:
             print(f"无法使用'{encoding}'编码来修复这个标题2")
 
+
 if __name__ == "__main__":
     db.get_database()
     db.get_table()
@@ -151,4 +178,4 @@ if __name__ == "__main__":
     # deal_with_garbled(ids, decoding)
     # count_links()
     # delete_links_above_threshold(400)
-    delete_duplicate_urls()
+    modify_same_title_content(6126, 6256)
