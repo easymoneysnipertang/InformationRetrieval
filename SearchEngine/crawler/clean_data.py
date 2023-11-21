@@ -38,8 +38,42 @@ def deal_with_garbled(ids,decoding):
 
 
 # 处理同title不同url的问题
-def deal_with_same_title():
-    pass
+def create_duplicate_title_table():
+    # 创建新的表
+    db.cursor.execute("""
+        CREATE TABLE same_title (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            page_id INT,
+            title VARCHAR(255),
+            url VARCHAR(255)
+        )
+    """)
+    db.cnx.commit()
+
+
+# 保存同title不同url的记录
+def save_duplicate_titles():
+    # 从原始表中选取title相同的记录
+    db.cursor.execute("""
+        SELECT id, title, url
+        FROM page
+        WHERE title IN (
+            SELECT title
+            FROM page
+            GROUP BY title
+            HAVING COUNT(title) > 1
+        )
+        ORDER BY title
+    """)
+    records = db.cursor.fetchall()
+    # 插入到新的表中
+    for record in records:
+        db.cursor.execute("""
+            INSERT INTO same_title (page_id, title, url)
+            VALUES (%s, %s, %s)
+        """, record)
+
+    db.cnx.commit()
 
 
 # 处理同title内容不同情况
@@ -178,4 +212,6 @@ if __name__ == "__main__":
     # deal_with_garbled(ids, decoding)
     # count_links()
     # delete_links_above_threshold(400)
-    modify_same_title_content(6126, 6256)
+    #modify_same_title_content(6126, 6256)
+    create_duplicate_title_table()
+    save_duplicate_titles()
