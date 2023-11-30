@@ -116,9 +116,106 @@ class Query:
         )
         return self.response_to_result(response)
     
+    def bool_search(self, must, mustnot, should , position = ["title", "content"]):
+        '''
+        布尔查询
+        提供must，mustnot，should三个选项
+        position参数用于指定搜索的位置
+        '''
+        save_query = "[must]:" + str(must) + "\t[mustnot]:" + str(mustnot) + "\t[should]:" + str(should) + "\t[position]:" + str(position)
+        self.save_query_log('<bool_search>', save_query)
+        # 执行搜索
+        # 创建空的查询数组
+        must_queries = []
+        mustnot_queries = []
+        should_queries = []
+        # 为每个字符串创建一个multi_match查询，并添加到相应的查询数组中
+        for m in must:
+            must_queries.append({"multi_match": {"query": m, "fields": position}})
+        for mn in mustnot:
+            mustnot_queries.append({"multi_match": {"query": mn, "fields": position}})
+        for s in should:
+            should_queries.append({"multi_match": {"query": s, "fields": position}})
+        # 执行搜索
+        response = self.es.search(
+            index="web",
+            body={
+                "size" : 100,
+                "query": {
+                    "function_score": {
+                        "query": {
+                            "bool": {
+                                "must": must_queries,
+                                "must_not": mustnot_queries,
+                                "should": should_queries
+                            }
+                        },
+                        "script_score": {
+                            "script": {
+                                "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
+                                "params": {
+                                    "factor": 100000
+                                }
+                            }
+                        },
+                        "boost_mode": "sum"
+                    }
+                }
+            }
+        )
+        return self.response_to_result(response)
+
+    def site_search(self, url, query):
+        '''
+        站内搜索
+        网页链接中必须包含url
+        实现的很不优雅, es不配合
+        '''
+        save_query = "[url]:" + url + "\t[query]:" + query
+        self.save_query_log('<site_search>', save_query)
+        results = self.search(query)
+        # 过滤掉不包含url的结果
+        results = [result for result in results if url in result['url']]
+        return results
+        
+    def fuzz_search(self, query):
+        '''
+        模糊查询
+        '''
+        self.save_query_log('<fuzz_search>', query)
+        # 执行搜索
+        response = self.es.search(
+            index="web",
+            body={
+                "size" : 100,
+                "query": {
+                    "function_score": {
+                        "query": {
+                            "multi_match": {
+                                "query": query,
+                                "fields": ["title", "content"],
+                                "fuzziness": "AUTO"
+                            }
+                        },
+                        "script_score": {
+                            "script": {
+                                "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
+                                "params": {
+                                    "factor": 100000
+                                }
+                            }
+                        },
+                        "boost_mode": "sum"
+                    }
+                }
+            }
+        )
+        return self.response_to_result(response)
+
     def wildcard_search(self, query):
         '''
         通配符查询
+        暂时不可用
         '''
         self.save_query_log('<wildcard_search>', query)
         # 执行搜索
@@ -139,6 +236,10 @@ class Query:
         return self.response_to_result(response)
     
     def regexp_search(self, query):
+        '''
+        正则表达式查询
+        可行性待验证
+        '''
         self.save_query_log('<regexp_search>', query)
         # 执行搜索
         response = self.es.search(
@@ -158,11 +259,9 @@ class Query:
             }
         )
         return self.response_to_result(response)
-    # must mustnot should
-            
 
 if __name__ == "__main__":
     query = Query()
-    results = query.regexp_search("Open(.)*") 
+    results = query.fuzz_search("肖申克救的赎")
     for result in results[0:10]:
         print(result['title'], result['url'], result['type'])
