@@ -223,12 +223,27 @@ class Query:
             index="web",
             body={
                 "query": {
-                    "wildcard": {
-                        "title": {
-                            "value": query,
-                            "boost": 1.0,
-                            "rewrite": "constant_score"
-                        }
+                    "bool": {
+                        "should": [
+                            {
+                                "wildcard": {
+                                    "title": {
+                                        "value": query,
+                                        "boost": 1.0,
+                                        "rewrite": "constant_score"
+                                    }
+                                }
+                            },
+                            {
+                                "wildcard": {
+                                    "content": {
+                                        "value": query,
+                                        "boost": 1.0,
+                                        "rewrite": "constant_score"
+                                    }
+                                }
+                            }
+                        ]
                     }
                 }
             }
@@ -245,15 +260,33 @@ class Query:
         response = self.es.search(
             index="web",
             body={
+                "size" : 100,
                 "query": {
-                    "regexp": {
-                        "title": {
-                            "value": query,
-                            "flags": "ALL",
-                            "case_insensitive": True,
-                            "max_determinized_states": 10000,
-                            "rewrite": "constant_score"
-                        }
+                    "bool": {
+                        "should": [
+                            {
+                                "regexp": {
+                                    "title": {
+                                        "value": query,
+                                        "flags": "ALL",
+                                        "case_insensitive": True,
+                                        "max_determinized_states": 10000,
+                                        "rewrite": "constant_score"
+                                    }
+                                }
+                            },
+                            {
+                                "regexp": {
+                                    "content": {
+                                        "value": query,
+                                        "flags": "ALL",
+                                        "case_insensitive": True,
+                                        "max_determinized_states": 10000,
+                                        "rewrite": "constant_score"
+                                    }
+                                }
+                            }
+                        ]
                     }
                 }
             }
@@ -262,6 +295,6 @@ class Query:
 
 if __name__ == "__main__":
     query = Query()
-    results = query.fuzz_search("肖申克救的赎")
+    results = query.wildcard_search("*GitBook2*")
     for result in results[0:10]:
         print(result['title'], result['url'], result['type'])
