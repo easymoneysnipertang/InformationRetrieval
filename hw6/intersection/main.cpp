@@ -7,7 +7,9 @@
 
 using namespace std;
 // 控制是否使用query间omp并行
-#define isParallel_out true
+#define isParallelOut true
+// 控制使用的求交算法：SVS、SVS_SSE、SVS_OMP
+#define Intersection SVS_SSE
 
 // 把倒排列表按长度排序
 void sorted(int* list, vector<InvertedIndex>& idx, int num) {
@@ -43,7 +45,7 @@ void do_intersection(){
 			QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
 			QueryPerformanceCounter((LARGE_INTEGER*)&head);  // Start Time
 
-#pragma omp parallel if(isParallel_out),num_threads(NUM_THREADS),shared(query,invertedLists)
+#pragma omp parallel if(isParallelOut),num_threads(NUM_THREADS),shared(query,invertedLists)
 #pragma omp for 
 			for (int i = 0; i < k; i++)  // k个查询
 			{
@@ -55,7 +57,8 @@ void do_intersection(){
 				for (int j = 0; j < num; j++)
 					list[j] = query[i][j];
 				sorted(list, (invertedLists), num);  // 按长度排序
-				SVS_SSE(list,invertedLists,num);  // 选择求交算法
+				// ----------调用求交算法----------
+				Intersection(list,invertedLists,num);
 			}
 			QueryPerformanceCounter((LARGE_INTEGER*)&tail);  // End Time
 			totalTime += (tail - head) * 1000.0 / freq;

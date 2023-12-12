@@ -41,7 +41,7 @@ InvertedIndex SVS(int* queryList, vector<InvertedIndex>& index, int num)
 	return s;
 }
 
-InvertedIndex SVS_omp(int* queryList, vector<InvertedIndex>& index, int num)
+InvertedIndex SVS_OMP(int* queryList, vector<InvertedIndex>& index, int num)
 {
 	InvertedIndex s = index[queryList[0]];  // 取最短的列表
 	int count = 0;
