@@ -10,7 +10,7 @@
 #define Intersection SVS
 ```
 
-`isParallelOut`决定是否在query间使用OpenMP多线程并行  
+`isParallelOut`决定是否在query间使用openMP多线程并行  
 `Intersection`决定使用选择的求交算法：`SVS`、`SVS_SSE`、`SVS_OMP`
 
 * 运行：  
