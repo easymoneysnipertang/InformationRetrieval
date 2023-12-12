@@ -55,7 +55,7 @@ void do_intersection(){
 				for (int j = 0; j < num; j++)
 					list[j] = query[i][j];
 				sorted(list, (invertedLists), num);  // 按长度排序
-				SVS_SSE(list,invertedLists,num);
+				SVS_SSE(list,invertedLists,num);  // 选择求交算法
 			}
 			QueryPerformanceCounter((LARGE_INTEGER*)&tail);  // End Time
 			totalTime += (tail - head) * 1000.0 / freq;
