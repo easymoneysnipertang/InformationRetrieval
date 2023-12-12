@@ -2,7 +2,7 @@
 #include<vector>
 using namespace std;
 
-struct InvertedIndex {  // 倒排索引结构
+struct InvertedIndex {  // 倒排索引数据结构
 	int length = 0;
 	vector<unsigned int> docIdList;
 };
