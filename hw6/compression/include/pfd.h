@@ -106,10 +106,6 @@ void pfdCompress(const vector<unsigned>& invertedIndex, vector<unsigned>& result
 	}
 }
 
-// invertedIndex: pfd压缩好的倒排索引
-// result：解缩后的索引
-// idx：从第idx个bit开始解压
-// return：解压后大小（bit)
 vector<unsigned> pfdDecompress(const vector<unsigned>& compressedLists, int& idx)
 {
 	vector<unsigned> vec_u_deltaId; //deltaId 数组
@@ -172,3 +168,4 @@ vector<unsigned> pfdDecompress(const vector<unsigned>& compressedLists, int& idx
 
 	return vec_u_deltaId;
 }
+

@@ -83,7 +83,7 @@ void getIndex(vector<vector<unsigned>>& invertedLists)
     cout << avgLen / 2000 << endl;
     file.close();
 
-    cout << "here" << endl;
+    cout << "-----file loaded-----" << endl;
 }
 
 // 将索引写入二进制文件

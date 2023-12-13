@@ -83,5 +83,5 @@ void getData(vector<InvertedIndex>& invertedLists,int query[1000][5],int& count)
 		}
 		count++;  // 总查询数
 	}
-	cout << "文件读取完毕" << endl;
+	cout << "-----file loaded-----" << endl;
 }

@@ -4,12 +4,10 @@
 #include <windows.h>
 
 using namespace std;
-
 // 压缩算法：dgapCompress、pfdCompress
-#define Compress pfdCompress
-// 解压算法：dgapDecompress、pfdDecompress
-#define Decompresss pfdDecompress
-
+#define UseDGap true
+// 解压算法：dgapDecompress、pfdDecompress、dgapDecompressOMP
+#define Decompresss dgapDecompress
 
 void decompress(const vector<unsigned>& compressedLists, vector<vector<unsigned>>& result)
 {
@@ -47,8 +45,12 @@ int main()
 
     //---------------------------------------压缩---------------------------------------------
     int idx = 0;
-    for (int i = 0; i < (int)invertedLists.size(); i++)  // 压缩，存到compressedRes中
-       Compress(invertedLists[i], compressedRes, idx);
+    for (int i = 0; i < (int)invertedLists.size(); i++){  // 压缩，存到compressedRes中
+        if(UseDGap)
+            dgapCompress(invertedLists[i], compressedRes, idx, idx);
+        else
+            pfdCompress(invertedLists[i], compressedRes, idx);
+    }
     
     // 将压缩结果写入文件
     vectorToBin(compressedRes, "compressed.bin");

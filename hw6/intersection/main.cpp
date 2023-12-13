@@ -64,7 +64,7 @@ void do_intersection(){
 			QueryPerformanceCounter((LARGE_INTEGER*)&tail);  // End Time
 			totalTime += (tail - head) * 1000.0 / freq;
 		}
-		cout << k << "个查询的平均时间为：" << totalTime / 5 << " ms" << endl;
+		cout << "average time for " << k << " queries: " << totalTime / 5 << " ms" << endl;
 		if (k == 100)
 			step = 100;
 		if (k == 400)
