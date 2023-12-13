@@ -1,15 +1,16 @@
-#include<iostream>
-#include<vector>
-#include<Windows.h>
-#include<algorithm>
-#include"InvertedIndex.h"
-#include"util.h"
+#include <iostream>
+#include <vector>
+#include <Windows.h>
+#include <algorithm>
+#include "InvertedIndex.h"
+#include "util.h"
+#include "SvS.h"
 
 using namespace std;
 // 控制是否使用query间omp并行
 #define isParallelOut true
 // 控制使用的求交算法：SVS、SVS_SSE、SVS_OMP
-#define Intersection SVS_SSE
+#define Intersection SVS
 
 // 把倒排列表按长度排序
 void sorted(int* list, vector<InvertedIndex>& idx, int num) {

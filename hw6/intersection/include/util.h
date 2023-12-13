@@ -1,15 +1,13 @@
 #pragma once
-#include<iostream>
-#include<fstream>
-#include<string>
-#include<vector>
-#include<sstream>
-#include<Windows.h>
-#include<algorithm>
-#include"InvertedIndex.h"
-#include"SvS.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <Windows.h>
+#include "InvertedIndex.h"
+#include "SvS.h"
 
 using namespace std;
+
 void verify()
 {
 	vector<InvertedIndex> testInvertedLists;

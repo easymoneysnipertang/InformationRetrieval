@@ -2,8 +2,6 @@
 
 ## Makefile使用
 
-### intersection
-
 * 修改main.cpp中的宏定义，选择求交算法：
 ```
 #define isParallelOut true
@@ -26,5 +24,3 @@ make clean
 ```
 
 清除编译生成的可执行文件。
-
-### compression

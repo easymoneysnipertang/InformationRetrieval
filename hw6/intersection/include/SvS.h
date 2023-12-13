@@ -1,9 +1,9 @@
 #pragma once
-#include<string>
-#include<vector>
-#include<algorithm>
-#include<omp.h>
-#include"InvertedIndex.h"
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <omp.h>
+#include "InvertedIndex.h"
 #include <immintrin.h>
 
 using namespace std;
