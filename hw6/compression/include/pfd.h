@@ -7,6 +7,22 @@
 
 #define PFOR_THRESHOLD 0.9
 
+void dgapTransform(const vector<unsigned>& invertedIndex, vector<unsigned>& result)
+{
+	unsigned indexLen = invertedIndex.size();
+	if (indexLen == 0)
+		return;
+
+	result.push_back(invertedIndex[0]);
+
+	// d-gap前一项减去后一项,同时求最大间隔
+	for (unsigned i = 1; i < indexLen; i++)
+	{
+		unsigned delta = invertedIndex[i] - invertedIndex[i - 1];
+		result.push_back(delta);
+	}
+}
+
 void pfdCompress(const vector<unsigned>& invertedIndex, vector<unsigned>& result, int& idx)
 {
 	vector<unsigned> deltaId;
@@ -40,7 +56,7 @@ void pfdCompress(const vector<unsigned>& invertedIndex, vector<unsigned>& result
 	writeBitData(result, idx + 32, b, 6); //写入元素位数
 
 	idx += 38;//从index+38位开始写正常数据
-	for (int i = 0; i < normalLen; i++)
+	for (unsigned i = 0; i < normalLen; i++)
 	{
 		unsigned mask = ((long long)pow(2, b) - 1);// 害怕了，到时候瞅瞅能不能改吧
 		unsigned low = deltaId[i] & mask;//保留低b位
@@ -77,7 +93,7 @@ void pfdCompress(const vector<unsigned>& invertedIndex, vector<unsigned>& result
 	writeBitData(result, idx + 38, a, 6); //写入元素位数
 
 	idx += 44;//从index+44位开始写异常数据
-	for (int i = 0; i < exceptionLen; i++)
+	for (unsigned i = 0; i < exceptionLen; i++)
 	{
 		int expIdx = exceptionIndex[i];
 
@@ -111,7 +127,7 @@ vector<unsigned> pfdDecompress(const vector<unsigned>& compressedLists, int& idx
 
 	//读正常数据
 	vec_u_deltaId.reserve(u_normalLen);
-	for (int i = 0; i < u_normalLen; i++)
+	for (unsigned i = 0; i < u_normalLen; i++)
 	{
 		unsigned u_deltaId = readBitData(compressedLists, idx, u_normalBitNum);
 		idx += u_normalBitNum;
@@ -125,7 +141,7 @@ vector<unsigned> pfdDecompress(const vector<unsigned>& compressedLists, int& idx
 	if (u_exceptionLen == 0) //没有异常数据，无需再读
 	{
 		idx += 32;
-		for (int i = 1; i < u_normalLen; i++)//还原，结束
+		for (unsigned i = 1; i < u_normalLen; i++)//还原，结束
 		{
 			vec_u_deltaId[i] += vec_u_deltaId[i - 1];
 		}
@@ -139,7 +155,7 @@ vector<unsigned> pfdDecompress(const vector<unsigned>& compressedLists, int& idx
 	idx += 44;
 
 	//读索引，再读数据交替
-	for (int i = 0; i < u_exceptionLen; i++)
+	for (unsigned i = 0; i < u_exceptionLen; i++)
 	{
 		unsigned u_exceptionIndex = readBitData(compressedLists, idx, u_exceptionIndexBitNum);
 		unsigned u_exceptionHigh = readBitData(compressedLists, idx+ u_exceptionIndexBitNum, u_exceptionDataBitNum);
@@ -149,7 +165,7 @@ vector<unsigned> pfdDecompress(const vector<unsigned>& compressedLists, int& idx
 	}
 
 	//------------------------------------使用dgap逆变换还原docId-----------------------------------------------
-	for (int i = 1; i < u_normalLen; i++)
+	for (unsigned i = 1; i < u_normalLen; i++)
 	{
 		vec_u_deltaId[i] += vec_u_deltaId[i - 1];
 	}

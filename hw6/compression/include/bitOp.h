@@ -42,7 +42,7 @@ unsigned int readBitData(const vector<unsigned int>& array, unsigned int index, 
     unsigned int data = (array[element_index] >> bit_position) & mask;
 
     // 如果要读取的n位跨越了两个数组项
-    if (bit_position > 32 - n) {
+    if (bit_position > (unsigned)(32 - n)) {
         unsigned int next_element = array[element_index + 1];
         unsigned int remaining_bits = n - (32 - bit_position);
         data |= (next_element & ((1 << remaining_bits) - 1)) << (n - remaining_bits);

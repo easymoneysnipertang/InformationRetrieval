@@ -20,4 +20,5 @@ run: $(TARGET)
 
 # 清理规则
 clean:
-	rm -f $(TARGET)
+	del /F /Q $(TARGET).exe
+	del /F /Q *.bin

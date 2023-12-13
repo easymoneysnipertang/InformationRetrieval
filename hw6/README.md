@@ -5,11 +5,11 @@
 * 修改main.cpp中的宏定义，选择求交算法：
 ```
 #define isParallelOut true
-#define Intersection SVS
+#define Intersect SVS
 ```
 
 `isParallelOut`决定是否在query间使用openMP多线程并行  
-`Intersection`决定使用选择的求交算法：`SVS`、`SVS_SSE`、`SVS_OMP`
+`Intersect`决定使用选择的求交算法：`SVS`、`SVS_SSE`、`SVS_OMP`
 
 * 运行：  
 ```
