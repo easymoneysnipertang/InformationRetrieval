@@ -1,5 +1,9 @@
 # 倒排索引求交和压缩算法的并行化
 
+## intersection
+
+## compression
+
 ## Makefile使用
 
 * 修改main.cpp中的宏定义，选择求交算法与压缩/解压缩算法：
