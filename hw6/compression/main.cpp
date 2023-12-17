@@ -43,7 +43,7 @@ int main()
     vector<unsigned> compressed;  // 读出来的压缩链表
     vector<unsigned> curList;  // 当前解压的链表
 
-    // //---------------------------------------压缩---------------------------------------------
+    //---------------------------------------压缩---------------------------------------------
     int idx = 0;
     for (int i = 0; i < (int)invertedLists.size(); i++){  // 压缩，存到compressedRes中
         if(UseDGap)

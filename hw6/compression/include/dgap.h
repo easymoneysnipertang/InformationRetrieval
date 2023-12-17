@@ -3,7 +3,6 @@
 #include "pfd.h"
 #include <omp.h>
 
-#define NUM_THREADS 4
 #define USESIMD true
 
 // invertedIndex: 排好序的倒排索引
@@ -94,11 +93,11 @@ vector<unsigned> dgapDecompressOMP(const vector<unsigned>& compressedLists, int&
 	if (seq_num == 0) {  // 特殊情况，每段0个
 		unsigned delta = readBitData(compressedLists, idx, bitNum);
 		idx += bitNum;
-		result[0] = delta;  //第一个delta直接进去
+		result[0] = delta;  // 第一个delta直接进去
 		for (unsigned i = 1; i < len; i++){
 			delta = readBitData(compressedLists, idx, bitNum);
 			idx += bitNum;
-			result[i] = result[i - 1] + delta;  //后续的都要加上前一个放进去
+			result[i] = result[i - 1] + delta;  // 后续的都要加上前一个放进去
 		}
 		return result;
 	}
@@ -130,7 +129,7 @@ vector<unsigned> dgapDecompressOMP(const vector<unsigned>& compressedLists, int&
 			// 使用simd做，一次加4个元素，注释以下部分即回到串行执行
 			if(USESIMD){
 				__m128i scalarValue = _mm_set1_epi32(result[tid * seq_num - 1]);
-				for (; j < seq_num - 1 - 3; j += 4) {// 使用simd
+				for (; j < seq_num - 1 - 3; j += 4) {  // 使用simd
 					__m128i vector = _mm_loadu_si128((__m128i*)&result[tid * seq_num + j]);
 					__m128i sum = _mm_add_epi32(scalarValue, vector);
 					_mm_storeu_si128((__m128i*)&result[tid * seq_num + j], sum);

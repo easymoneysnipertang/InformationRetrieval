@@ -2,10 +2,10 @@
 #include <string>
 #include <sstream>
 #include <emmintrin.h>
+#include <omp.h>
 #include "bitOp.h"
 #include "dgap.h"
 
-#define NUM_THREADS 4
 #define PFOR_THRESHOLD 0.9
 
 void dgapTransform(const vector<unsigned>& invertedIndex, vector<unsigned>& result)
@@ -189,8 +189,8 @@ vector<unsigned> pfdDecompressOMP(const vector<unsigned>& compressedLists, int& 
 	// 读正常数据
 	// TODO：看能不能多线程做
 	vec_u_deltaId.reserve(u_normalLen);
-	for (unsigned i = 0; i < u_normalLen; i++)
-	{
+
+	for (unsigned i = 0; i < u_normalLen; i++){
 		unsigned u_deltaId = readBitData(compressedLists, idx, u_normalBitNum);
 		idx += u_normalBitNum;
 		vec_u_deltaId.push_back(u_deltaId);  // 存入数组
@@ -200,13 +200,10 @@ vector<unsigned> pfdDecompressOMP(const vector<unsigned>& compressedLists, int& 
 	//----------------------写入result，结构：异常长度(exceptionLen)+ 索引位数+ 位数(a)+索引1，异常数据1，索引2，异常数据2，...-------------------------
 	// 读长度
 	unsigned u_exceptionLen = readBitData(compressedLists, idx, 32);
-	if (u_exceptionLen == 0)  // 没有异常数据，无需再读
-	{
+	if (u_exceptionLen == 0){  // 没有异常数据，无需再读
 		idx += 32;
 		for (unsigned i = 1; i < u_normalLen; i++)  // 还原，结束
-		{
 			vec_u_deltaId[i] += vec_u_deltaId[i - 1];
-		}
 		return vec_u_deltaId;
 	}
 	// 读索引位数
@@ -217,19 +214,44 @@ vector<unsigned> pfdDecompressOMP(const vector<unsigned>& compressedLists, int& 
 	idx += 44;
 
 	// 读索引，再读数据交替
-	for (unsigned i = 0; i < u_exceptionLen; i++)
-	{
+	for (unsigned i = 0; i < u_exceptionLen; i++){
 		unsigned u_exceptionIndex = readBitData(compressedLists, idx, u_exceptionIndexBitNum);
 		unsigned u_exceptionHigh = readBitData(compressedLists, idx+ u_exceptionIndexBitNum, u_exceptionDataBitNum);
 		idx += u_exceptionIndexBitNum + u_exceptionDataBitNum;
-
 		vec_u_deltaId[u_exceptionIndex] |= (u_exceptionHigh << u_normalBitNum);  // 将normal位留出来，取或还原
 	}
 
 	//------------------------------------使用dgap逆变换还原docId-----------------------------------------------
 	// TODO：多线程前缀和
-	for (unsigned i = 1; i < u_normalLen; i++)
-		vec_u_deltaId[i] += vec_u_deltaId[i - 1];
+	std::vector<int> last_value(NUM_THREADS, 0);
+#pragma omp parallel num_threads(NUM_THREADS)
+	{
+		int thread_id = omp_get_thread_num();
+		int start = thread_id * u_normalLen / NUM_THREADS;
+		int end = (thread_id + 1) * u_normalLen / NUM_THREADS;
+		if (thread_id == NUM_THREADS - 1) end = u_normalLen;
+
+		for (int i = start + 1; i < end; i++)
+			vec_u_deltaId[i] += vec_u_deltaId[i - 1];
+
+		last_value[thread_id] = vec_u_deltaId[end - 1];
+	}
+
+#pragma omp single
+	for (int i = 1; i < NUM_THREADS; i++)
+    	last_value[i] += last_value[i - 1];
+
+#pragma omp parallel num_threads(NUM_THREADS)
+	{
+		int thread_id = omp_get_thread_num();
+		if (thread_id != 0){
+			int start = thread_id * u_normalLen / NUM_THREADS;
+			int end = (thread_id + 1) * u_normalLen / NUM_THREADS;
+			if (thread_id == NUM_THREADS - 1) end = u_normalLen;
+			for (int i = start; i < end; i++)
+				vec_u_deltaId[i] += last_value[thread_id - 1];
+		}
+	}
 
 	return vec_u_deltaId;
 }

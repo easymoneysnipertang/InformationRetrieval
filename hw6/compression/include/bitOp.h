@@ -6,6 +6,8 @@
 #include <sstream>
 #include <vector>
 #include <math.h>
+
+#define NUM_THREADS 4
 using namespace std;
 
 // 将n位数据写入到int型数组中
