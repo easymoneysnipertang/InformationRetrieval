@@ -2,10 +2,27 @@ from elasticsearch import Elasticsearch
 import jieba
 from datetime import datetime
 import os
+import pymysql
+
+# TODO：根据label调整得分
 
 class Query:
     def __init__(self):
         self.es = Elasticsearch(hosts="http://localhost:9200")
+        self.cnx = pymysql.connect(host='localhost', user='root', password='123qwe12')
+        self.cursor = self.cnx.cursor()
+        self.cnx.select_db('IR_db')
+        # 创建表
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user_queries (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                query_content TEXT,
+                query_type VARCHAR(255),
+                query_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        # 提交
+        self.cnx.commit()
 
     def save_query_log(self, type, query):
         '''
@@ -19,6 +36,13 @@ class Query:
         # 打开log文件
         with open(log_path, "a", encoding="utf-8") as f:
             f.write("[" + query_time + "]" + "\t" + type + "\t" + query + "\n")
+        # 创建插入SQL语句
+        add_query = ("INSERT INTO user_queries "
+                    "(query_content, query_type, query_time) "
+                    "VALUES (%s, %s, %s)")
+        query_data = (query, type, query_time)
+        self.cursor.execute(add_query, query_data)
+        self.cnx.commit()
         
     def response_to_result(self, response):
         '''
@@ -293,6 +317,7 @@ class Query:
         )
         return self.response_to_result(response)
 
+    
 if __name__ == "__main__":
     query = Query()
     results = query.wildcard_search("*GitBook2*")

@@ -10,7 +10,7 @@ using namespace std;
 // 控制是否使用query间omp并行
 #define isParallelOut true
 // 控制使用的求交算法：SVS、SVS_SSE、SVS_OMP
-#define Intersect SVS
+#define Intersect SVS_SSE
 
 // 把倒排列表按长度排序
 void sorted(int* list, vector<InvertedIndex>& idx, int num) {
