@@ -10,10 +10,10 @@
     - index：elastic search建索引
     - search：elastic search查询，包含高级查询
     - page_rank：networkx计算pageRank，更新es索引
-    - recommend：基于查询记录与kmeans聚类
+    - recommend：kmeans聚类用于后续推荐系统
     - web：flask搭建网页  
 
 - hw6：倒排索引压缩与求交算法并行化
     - 压缩：d-gap + OptPFD
     - 求交：SVS
-    - 并行化：SIMD+OpenMP
+    - 并行化：SIMD + OpenMP

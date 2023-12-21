@@ -1,4 +1,4 @@
-# recommend
+## recommend
 
 1. 保存查询记录，推荐top query
    - 选出top query来计算cosine_similarity
