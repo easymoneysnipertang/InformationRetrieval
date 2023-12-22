@@ -1,13 +1,14 @@
 from elasticsearch import Elasticsearch
-import jieba
 from datetime import datetime
 import os
 import pymysql
 
-# TODO：根据label调整得分
+# type: douban,page,html
+# label: douban,page,news
 
 class Query:
-    def __init__(self):
+    def __init__(self,label):
+        self.label = label 
         self.es = Elasticsearch(hosts="http://localhost:9200")
         self.cnx = pymysql.connect(host='localhost', user='root', password='123qwe12')
         self.cursor = self.cnx.cursor()
@@ -17,12 +18,26 @@ class Query:
             CREATE TABLE IF NOT EXISTS user_queries (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 query_content TEXT,
-                query_type VARCHAR(255),
-                query_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                query_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                count INT
             )
         """)
         # 提交
         self.cnx.commit()
+
+    def get_pop_query(self):
+        '''
+        获取热门查询
+        '''
+        # 查询语句
+        query = ("SELECT query_content FROM user_queries ORDER BY count DESC LIMIT 20")
+        # 执行查询
+        self.cursor.execute(query)
+        # 获取查询结果
+        results = self.cursor.fetchall()
+        # 将查询结果转换为列表
+        pop_query = [result[0] for result in results]
+        return pop_query
 
     def save_query_log(self, type, query):
         '''
@@ -36,12 +51,17 @@ class Query:
         # 打开log文件
         with open(log_path, "a", encoding="utf-8") as f:
             f.write("[" + query_time + "]" + "\t" + type + "\t" + query + "\n")
-        # 创建插入SQL语句
-        add_query = ("INSERT INTO user_queries "
-                    "(query_content, query_type, query_time) "
-                    "VALUES (%s, %s, %s)")
-        query_data = (query, type, query_time)
-        self.cursor.execute(add_query, query_data)
+        # 检查query_content是否存在
+        check_query = ("SELECT count(*) FROM user_queries WHERE query_content = %s")
+        self.cursor.execute(check_query, (query,))
+        result = self.cursor.fetchone()
+        if result[0] > 0:  # query_content存在，更新行
+            update_query = ("UPDATE user_queries SET count = count + 1, query_time = %s WHERE query_content = %s")
+            query_data = (query_time, query)
+        else:  # query_content不存在，插入新行
+            update_query = ("INSERT INTO user_queries (query_content, query_time, count) VALUES (%s, %s, 1)")
+            query_data = (query, query_time)
+        self.cursor.execute(update_query, query_data)
         self.cnx.commit()
         
     def response_to_result(self, response):
@@ -91,14 +111,29 @@ class Query:
                                 ]
                             }
                         },
-                        "script_score": {
-                            "script": {
-                                "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
-                                "params": {
-                                    "factor": 100000
+                        "functions": [
+                        {
+                            "script_score": {
+                                "script": {
+                                    "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
+                                    "params": {
+                                        "factor": 100000
+                                    }
                                 }
                             }
                         },
+                        {
+                            "filter": {
+                                "term": {
+                                    "type": self.label
+                                }
+                            },
+                            "script_score": {
+                                "script": {
+                                    "source": "_score * 1.1"
+                                }
+                            }
+                        }],
                         "boost_mode": "sum"
                     }
                 }
@@ -125,14 +160,29 @@ class Query:
                                 "type": "phrase"
                             }
                         },
-                        "script_score": {
-                            "script": {
-                                "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
-                                "params": {
-                                    "factor": 100000
+                        "functions": [
+                        {
+                            "script_score": {
+                                "script": {
+                                    "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
+                                    "params": {
+                                        "factor": 100000
+                                    }
                                 }
                             }
                         },
+                        {
+                            "filter": {
+                                "term": {
+                                    "type": self.label
+                                }
+                            },
+                            "script_score": {
+                                "script": {
+                                    "source": "_score * 1.1"
+                                }
+                            }
+                        }],
                         "boost_mode": "sum"
                     }
                 }
@@ -221,14 +271,29 @@ class Query:
                                 "fuzziness": "AUTO"
                             }
                         },
-                        "script_score": {
-                            "script": {
-                                "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
-                                "params": {
-                                    "factor": 100000
+                        "functions": [
+                        {
+                            "script_score": {
+                                "script": {
+                                    "source": "doc['pageRank'].value == 0 ? 1 : Math.log1p(doc['pageRank'].value * params.factor)",
+                                    "params": {
+                                        "factor": 100000
+                                    }
                                 }
                             }
                         },
+                        {
+                            "filter": {
+                                "term": {
+                                    "type": self.label
+                                }
+                            },
+                            "script_score": {
+                                "script": {
+                                    "source": "_score * 1.1"
+                                }
+                            }
+                        }],
                         "boost_mode": "sum"
                     }
                 }
@@ -319,7 +384,8 @@ class Query:
 
     
 if __name__ == "__main__":
-    query = Query()
-    results = query.wildcard_search("*GitBook2*")
-    for result in results[0:10]:
-        print(result['title'], result['url'], result['type'])
+    query = Query('news')
+    print(query.get_pop_query())
+    # results = query.phase_search("越南两位副总理")
+    # for result in results[0:10]:
+    #     print(result['title'], result['url'], result['type'])

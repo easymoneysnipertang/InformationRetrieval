@@ -12,4 +12,4 @@
 
 > Ranked？-> ES默认采用BM25算法  
 > 使用function_score和script_score调整评分  
-> 包括在title得分更高，pageRank高得分更高
+> 包括在title得分更高，pageRank高得分更高，label相同得分更高
