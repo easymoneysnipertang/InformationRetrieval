@@ -78,7 +78,7 @@
             <div class="resultArea">
                 <p class="resultTotal">
                     <span class="info">找到约&nbsp;<span class="totalResult">{{ number }}</span>
-                        &nbsp;条结果(用时<span class="time">{{ costTime }}</span>秒)，共约<span
+                        &nbsp;条结果(用时约<span class="time">{{ cost_time }}</span>秒)，共<span
                                 class="totalPage">{{ last_page }}</span>页</span>
                 </p>
 
@@ -213,7 +213,7 @@
 <script src="/static/js/textSearch.js"></script>
 
 <script type="text/javascript">
-    $(".resultList").textSearch("{{ highlightWords }}")
+    $(".resultList").textSearch("{{ highlight }}")
 </script>
 </body>
 

@@ -36,7 +36,7 @@ class Query:
         获取热门查询
         '''
         # 查询语句
-        query = ("SELECT query_content FROM user_queries ORDER BY count DESC LIMIT 20")
+        query = ("SELECT query_content FROM user_queries ORDER BY count DESC LIMIT 10")
         # 执行查询
         self.cursor.execute(query)
         # 获取查询结果
