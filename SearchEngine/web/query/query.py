@@ -84,6 +84,7 @@ class Query:
                 "content": hit["_source"]["content"],
                 "url": hit["_source"]["url"],
                 "type": hit["_source"]["type"],
+                "score": hit["_score"]
             }
             for hit in hits
         ]

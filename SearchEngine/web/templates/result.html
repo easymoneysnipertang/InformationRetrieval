@@ -80,15 +80,116 @@
                     <span class="info">找到约&nbsp;<span class="totalResult">{{ number }}</span>
                         &nbsp;条结果(用时<span class="time">{{ costTime }}</span>秒)，共约<span
                                 class="totalPage">{{ last_page }}</span>页</span>
-
                 </p>
 
-            </div>
+                <div class="resultList" id="resultList">
+                    {% if number == 0 %}
+                        <p>抱歉！没有找到结果。</p>
+                        <p>请跳转<a target="_blank" href="https://www.bing.com/">bing</a>进行搜索。</p>
+                    {% endif %}
 
-            <!--历史热门搜索+推荐内容-->
+                    {% for result in results %}
+                        <div class="resultItem">
+                            <div class="itemHead">
+                                <a href="{{ result.url }}" target="_blank" class="title">
+                                    {{ result.title }}
+                                </a>
+                                <span class="divsion"></span>
+
+                                <span class="dependValue">
+                                <span class="label">得分：</span>
+                                <span class="value">{{ result.score }}</span>
+                            </span>
+                            </div>
+                            <div class="itemBody">
+                                {{ result.content|truncate(150, True, '...') }}
+                                <a href="{{ result.url }} " target="_blank">
+                                    <span class="text">更多</span>
+                                    <i class="moreIcon"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 分页 -->
+                <!-- <div class="pagination ue-clear">
+                    <ul class="pagination pagination-lg">
+                        {% if currentPage.has_previous %}
+                            <li>
+                                <a href="/results?q={{ query }}&page={{ currentPage.previous_page_number }}"><i
+                                        class="fa fa-angle-left"></i> < </a></li>
+                        {% endif %}
+
+                        {# 页码号为1永远显示 #}
+                        {% if first_page == currentPage.number %}
+                            <li class="active"><a href="/results?q={{ query }}&page=1&">1</a></li>
+                        {% else %}
+                            <li><a href="/results?q={{ query }}&page=1&">1</a></li>
+                        {% endif %}
+
+                        {% if pages_first > 2 %}
+                            <li><a href="#">...</a></li>
+                        {% endif %}
+
+                        {% for pg in pages %}
+                            {% if currentPage.number == pg %}
+                                <li class="active"><a href="/results?q={{ query }}&page={{ pg }}&order={{ order }}">{{ pg }}</a>
+                                </li>
+                            {% else %}
+                                <li><a href="/results?q={{ query }}&page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {#pages最后一个值+1的值小于最大页码号，说明有页码号需要被省略号替换#}
+                        {% if pages_last < last_page %}
+                            <li><a href="#">...</a></li>
+                        {% endif %}
+
+                        {# 永远显示最后一页的页码号，如果只有一页则前面已经显示了1就不用再显示了 #}
+                        {% if last_page != 1 %}
+                            {% if currentPage.number == last_page %}
+                                <li class="active"><a
+                                        href="/results?q={{ query }}&page={{ last_page }}&order={{ order }}">{{ last_page }}</a>
+                                </li>
+                            {% else %}
+                                <li><a href="/results?q={{ query }}&page={{ last_page }}&order={{ order }}">{{ last_page }}</a></li>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if currentPage.has_next %}
+                            <li><a href="/results?q={{ query }}&page={{ currentPage.next_page_number }}&order={{ order }}"><i
+                                class="fa fa-angle-right"></i> > </a>
+                        {% endif %}
+
+                    </ul>
+                </div> -->
+
+                <!-- 相关搜索 -->
+                <div class="dependSearch ue-clear">
+                    {% if has_recommend == 1 %}
+                        <h6>相关搜索</h6>
+                        <div class="searchList">
+                            <p>
+                                {% for q in recommend_query1 %}
+                                    <a href="/results?q={{ q }}"> {{ q }} </a>
+                                {% endfor %}
+                            </p>
+                            <p>
+                                {% for q in recommend_query2 %}
+                                    <a href="/results?q={{ q }}"> {{ q }} </a>
+                                {% endfor %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div> <!-- End of resultArea -->
+
+            <!--历史热门搜索-->
             <div class="historyArea">
                 <div class="hotSearch">
-                    <h6>推荐阅读</h6>
+                    <h6>热门搜索</h6>
                     <ul class="historyList">
                         {% for query in pop_query %}
                             <li>&nbsp;&nbsp;
@@ -103,7 +204,9 @@
     </div><!--End of bd-->
 </div>
 
-<div id="foot">Copyright</div>
+<div id="foot">Copyright: 
+    <a href="https://github.com/easymoneysnipertang/InformationRetrieval">StudentTang</a>
+</div>
 
 
 <script src="/static/js/jquery-1.10.2.min.js"></script>

@@ -7,7 +7,7 @@ import os
 import numpy as np
 import random
 
-uselessClusters = [0,2,14]
+uselessClusters = [0,14]
 
 class Recommend:
     def __init__(self):
@@ -45,8 +45,8 @@ class Recommend:
         # 获取查询结果
         results = self.cursor.fetchall()
         # 如果isSample为真，随机采样
-        if isSample and len(results) > 600:
-            results = random.sample(results, 600)
+        if isSample and len(results) > 2000:
+            results = random.sample(results, 2000)
         return results
     
     def cal_recommend(self,query,list,num,threshold):
@@ -72,12 +72,12 @@ class Recommend:
         # 获取查询所在的簇
         query_label = self.get_cluster(query)
         if query_label not in uselessClusters:
-            recommend_querys = self.cal_recommend(query,pop_query,5,0.1)
+            recommend_querys = self.cal_recommend(query,pop_query,3,0.1)
             # 获取簇中的文档
             docs = self.get_cluster_docs(query_label)
             titles = [doc[1] for doc in docs]
             # 计算推荐文档索引
-            recommend_cluster_querys = self.cal_recommend(query,titles,5,0.25)
+            recommend_cluster_querys = self.cal_recommend(query,titles,7,0.25)
         else:
             recommend_querys = self.cal_recommend(query,pop_query,5,0)
             # 获取簇中的文档
@@ -87,8 +87,7 @@ class Recommend:
             recommend_cluster_querys = self.cal_recommend(query,titles,5,0.1)
         # 合并
         recommend_querys.extend(recommend_cluster_querys)
-        if len(recommend_querys)<3:
-            recommend_querys.extend(random.sample(pop_query,5))
+
         return recommend_querys
     
 
