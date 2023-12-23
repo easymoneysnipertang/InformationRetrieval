@@ -112,58 +112,7 @@
                     {% endfor %}
                 </div>
 
-                <!-- 分页 -->
-                <!-- <div class="pagination ue-clear">
-                    <ul class="pagination pagination-lg">
-                        {% if currentPage.has_previous %}
-                            <li>
-                                <a href="/results?q={{ query }}&page={{ currentPage.previous_page_number }}"><i
-                                        class="fa fa-angle-left"></i> < </a></li>
-                        {% endif %}
-
-                        {# 页码号为1永远显示 #}
-                        {% if first_page == currentPage.number %}
-                            <li class="active"><a href="/results?q={{ query }}&page=1&">1</a></li>
-                        {% else %}
-                            <li><a href="/results?q={{ query }}&page=1&">1</a></li>
-                        {% endif %}
-
-                        {% if pages_first > 2 %}
-                            <li><a href="#">...</a></li>
-                        {% endif %}
-
-                        {% for pg in pages %}
-                            {% if currentPage.number == pg %}
-                                <li class="active"><a href="/results?q={{ query }}&page={{ pg }}&order={{ order }}">{{ pg }}</a>
-                                </li>
-                            {% else %}
-                                <li><a href="/results?q={{ query }}&page={{ pg }}&order={{ order }}">{{ pg }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-
-                        {#pages最后一个值+1的值小于最大页码号，说明有页码号需要被省略号替换#}
-                        {% if pages_last < last_page %}
-                            <li><a href="#">...</a></li>
-                        {% endif %}
-
-                        {# 永远显示最后一页的页码号，如果只有一页则前面已经显示了1就不用再显示了 #}
-                        {% if last_page != 1 %}
-                            {% if currentPage.number == last_page %}
-                                <li class="active"><a
-                                        href="/results?q={{ query }}&page={{ last_page }}&order={{ order }}">{{ last_page }}</a>
-                                </li>
-                            {% else %}
-                                <li><a href="/results?q={{ query }}&page={{ last_page }}&order={{ order }}">{{ last_page }}</a></li>
-                            {% endif %}
-                        {% endif %}
-
-                        {% if currentPage.has_next %}
-                            <li><a href="/results?q={{ query }}&page={{ currentPage.next_page_number }}&order={{ order }}"><i
-                                class="fa fa-angle-right"></i> > </a>
-                        {% endif %}
-
-                    </ul>
-                </div> -->
+                
 
                 <!-- 相关搜索 -->
                 <div class="dependSearch ue-clear">

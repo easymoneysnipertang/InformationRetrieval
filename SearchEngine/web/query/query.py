@@ -31,14 +31,14 @@ class Query:
         '''
         self.label = label
 
-    def get_pop_query(self):
+    def get_pop_query(self,n):
         '''
         获取热门查询
         '''
         # 查询语句
-        query = ("SELECT query_content FROM user_queries ORDER BY count DESC LIMIT 10")
+        query = ("SELECT query_content FROM user_queries ORDER BY count DESC LIMIT %s")
         # 执行查询
-        self.cursor.execute(query)
+        self.cursor.execute(query, (n,))
         # 获取查询结果
         results = self.cursor.fetchall()
         # 将查询结果转换为列表
@@ -391,8 +391,19 @@ class Query:
 
     
 if __name__ == "__main__":
+    # 测试正则表达式查询
+    # bool_pattern = r"(\+|\-|\|)\((.*?)\)"  # 布尔查询的正则表达式
+    # query = "+(apple watermelon) -(banana) |(cherry orange)"
+    # matches = re.findall(bool_pattern,query)
+    # for match in matches:
+    #     if match[0] == '+':
+    #         print(match[1].split(' '))
+    #     elif match[0] == '-':
+    #         print(match[1].split(' '))
+    #     elif match[0] == '|':
+    #         print(match[1].split(' '))
     query = Query('news')
-    print(query.get_pop_query())
+    print(query.get_pop_query(5))
     # results = query.phase_search("越南两位副总理")
     # for result in results[0:10]:
     #     print(result['title'], result['url'], result['type'])
