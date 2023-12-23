@@ -2,7 +2,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>MySearchEngine</title>
+    <title>tang's Search Engine</title>
     <link href="../static/css/style.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/result.css" rel="stylesheet" type="text/css"/>
     {#    <link href="../static/css/bootstrap.css" rel="stylesheet" type="text/css"/>#}
@@ -13,7 +13,7 @@
 <div id="container">
     <!-- 上方logo和搜索栏 -->
     <div id="hd" class="ue-clear">
-        <a href="/index/">
+        <a href="/index">
             <div class="logo"></div>
         </a>
         <div class="inputArea">
@@ -28,20 +28,21 @@
     <div id="bd" class="ue-clear">
         <div id="main">
             <div class="sideBar">
-                <div class="subfield">排序规则</div>
+                <!-- 用的别人模板，我没有这一块内容 -->
+                <div class="subfield">内容调整</div>
                 <ul class="subfieldContext">
                     <li>
-                        <a href="/results?q={{ query }}&page=1&order=sim"
-                           class="byDependence">按相关度排序</a>
+                        <a href="/results?q={{ query }}&page=1&label=news"
+                           class="byDependence">更感兴趣新闻</a>
                     </li>
                     <li>
-                        <a href="/results?q={{ query }}&page=1&order=time"
-                           class="byTime">按时间排序</a>
+                        <a href="/results?q={{ query }}&page=1&label=douban"
+                           class="byTime">更感兴趣文艺</a>
 
                     </li>
                     <li>
-                        <a href="/results?q={{ query }}&page=1&order=view"
-                           class="byDependence">按阅读量排序</a>
+                        <a href="/results?q={{ query }}&page=1&label=page"
+                           class="byDependentang's Search Enginece">更感兴趣技术</a>
                     </li>
                 </ul>
 
@@ -49,22 +50,22 @@
                 <ul class="subfieldContext">
                     <li>
                         <span class="name">
-                            <a target="_blank" href="https://www.baidu.com/">
-                            &nbsp;百度搜索
+                            <a target="_blank" href="https://github.com/easymoneysnipertang">
+                            &nbsp;StudentTang
                             </a>
                         </span>
                     </li>
                     <li>
                         <span class="name">
-                            <a target="_blank" href="https://www.google.com.hk/">
-                                &nbsp;Google
+                            <a target="_blank" href="https://cc.nankai.edu.cn">
+                                &nbsp;NKUCS
                             </a>
                         </span>
                     </li>
                     <li>
                         <span class="name">
                             <a target="_blank" href="/index">
-                                &nbsp;CSDN搜索
+                                &nbsp;tang's SearchEngine
                             </a></span>
                     </li>
                 </ul>

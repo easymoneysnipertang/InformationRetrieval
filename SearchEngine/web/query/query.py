@@ -25,6 +25,12 @@ class Query:
         # 提交
         self.cnx.commit()
 
+    def set_label(self, label):
+        '''
+        设置搜索的内容标签
+        '''
+        self.label = label
+
     def get_pop_query(self):
         '''
         获取热门查询
