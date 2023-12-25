@@ -112,7 +112,12 @@
                     {% endfor %}
                 </div>
 
-                
+                 <!-- 分页 -->
+                 <div class="pagination ue-clear">
+                    <a href="?page={{ page - 1 if page > 1 else 1 }}">上一页</a>
+                    <span>当前页：{{ page }}</span>
+                    <a href="?page={{ page + 1 if page < last_page else last_page }}">下一页</a>
+                </div>
 
                 <!-- 相关搜索 -->
                 <div class="dependSearch ue-clear">
@@ -160,6 +165,32 @@
 
 <script src="/static/js/jquery-1.10.2.min.js"></script>
 <script src="/static/js/textSearch.js"></script>
+
+<script>
+    window.onload = function() {
+        var links = document.querySelectorAll('.title');
+        links.forEach(function(link) {
+            link.addEventListener('click', function(event) { // 在这里添加 event 参数
+                event.preventDefault(); // 阻止默认的链接点击行为
+                // 跳转
+                window.open(this.href);
+                //console.log('用户点击了URL: ' + this.href);
+                // 使用 AJAX 将 URL 传递到后端
+                $.ajax({
+                    url: '/results/handle_click', // 你的 Flask 路由
+                    method: 'POST',
+                    data: {
+                        'url': this.href
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        // 在这里处理服务器的响应
+                    }
+                });
+            });
+        });
+    };
+</script>
 
 <script type="text/javascript">
     $(".resultList").textSearch("{{ highlight }}")

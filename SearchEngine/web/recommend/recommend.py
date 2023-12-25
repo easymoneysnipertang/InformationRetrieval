@@ -93,7 +93,7 @@ class Recommend:
 
 if __name__ == '__main__':
     recommend = Recommend()
-    results = recommend.get_recommend('随笔档案 - 京东云开发者', ['霸王别姬','肖申克','我爱python','java'])
+    results = recommend.get_recommend('python', ['霸王别姬','肖申克','我爱python','java'])
     print(results)
 
 
