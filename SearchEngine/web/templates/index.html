@@ -5,17 +5,102 @@
     <title>tang's Search Engine</title>
     <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
     <link href="/static/css/index.css" rel="stylesheet" type="text/css"/>
+
+    <!-- 模态框的 CSS -->
+    <style>
+    .modal {
+        display: none; /* 默认隐藏 */
+        position: fixed; /* 保持在顶部 */
+        z-index: 1; /* 位于其他内容之上 */
+        padding-top: 100px; /* 位置 */
+        left: 0;
+        top: 0;
+        width: 100%; /* 宽度 */
+        height: 100%; /* 高度 */
+        overflow: auto; /* 启用滚动 */
+        background-color: rgb(0,0,0); /* 背景颜色 */
+        background-color: rgba(0,0,0,0.4); /* 黑色背景，透明度0.4 */
+    }
+    
+    /* 模态框内容 */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 上下外边距为15%，左右自动 */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%; /* 宽度为50% */
+    }
+    
+    /* 关闭按钮 */
+    .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+     
+    .header {
+        position: fixed; /* 固定位置 */
+        top: 20px; /* 距离顶部的距离 */
+        right: 20px; /* 距离右侧的距离 */
+    }
+
+    .greeting {
+        font-size: 2em; /* 调整字体大小 */
+    }
+
+    </style>
+    
+
 </head>
 
 <body>
 <div id="container">
+    <!-- 登录弹窗 -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form method="post" action="/login">
+                <label for="userid">用户ID:</label><br>
+                <input type="text" id="userid" name="userid"><br>
+                <label for="password">密码:</label><br>
+                <input type="password" id="password" name="password"><br>
+                <br>
+                <label for="interest">更感兴趣的类别:</label><br>
+                <select id="interest" name="interest">
+                    <option value="news">新闻</option>
+                    <option value="douban">书籍</option>
+                    <option value="douban">电影</option>
+                    <option value="page">技术</option>
+                </select><br>
+                <br>
+                <input type="submit" value="登录">
+            </form>
+        </div>
+    </div>
+
+    <div class="header">
+    {% if is_login %}
+        <h3 class="greeting">hi {{ user_id }}</h3>
+    {% else %}
+        <!-- 触发模态框的按钮 -->
+        <button id="loginBtn">登录获取更准确推荐</button>
+    {% endif %}
+    </div>
+
     <div id="bd">
         <div id="main">
             <h1 class="title">
                 <div class="logo large"></div>
             </h1>
             <div class="nav ue-clear">
-
             </div>
 
             <div class="inputArea">
@@ -45,5 +130,63 @@
     </div>
 </div>
 </body>
+
+
+<!-- 模态框的 JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    // 获取模态框
+    var modal = document.getElementById("loginModal");
+    // 获取登录按钮
+    var btn = document.getElementById("loginBtn");
+    // 获取关闭按钮
+    var span = document.getElementsByClassName("close")[0];
+    // 当用户点击登录按钮时，显示模态框
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+    // 当用户点击关闭按钮时，隐藏模态框
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    // 当用户点击模态框外部时，隐藏模态框
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // 获取表单
+    var form = document.getElementById("loginForm");
+    // 当表单提交时，阻止默认的提交行为并发送 AJAX 请求
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        // 获取用户输入的数据
+        var userid = document.getElementById("userid").value;
+        var password = document.getElementById("password").value;
+        var interest = document.getElementById("interest").value;
+        // 使用 AJAX 将数据发送到后端
+        $.ajax({
+            url: '/login', // Flask 路由
+            method: 'POST',
+            data: {
+                'userid': userid,
+                'password': password,
+                'interest': interest
+            },
+            success: function(response) {
+                // 如果登录成功，显示 "success"
+                if (response == '登录成功') {
+                    alert('success');
+                } else {
+                    alert('登录失败');
+                }
+            }
+        });
+        // 关闭模态框
+        modal.style.display = "none";
+    };
+});
+</script>
 
 </html>

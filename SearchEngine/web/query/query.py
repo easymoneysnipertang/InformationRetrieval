@@ -12,6 +12,7 @@ bool_pattern = r"(\+|\-|\|)\((.*?)\)"  # 布尔查询的正则表达式
 
 class Query:
     def __init__(self,label):
+        self.clicked_urls = []  # 全局点击过的URL
         self.label = label 
         self.es = Elasticsearch(hosts="http://localhost:9200")
         self.cnx = pymysql.connect(host='localhost', user='root', password='123qwe12')
@@ -34,6 +35,9 @@ class Query:
         设置搜索的内容标签
         '''
         self.label = label
+
+    def set_urls(self,urls):
+        self.clicked_urls = urls
 
     def get_pop_query(self,n):
         '''
@@ -144,7 +148,19 @@ class Query:
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.1"
+                                    "source": "_score * 1.2"
+                                }
+                            }
+                        },
+                        {
+                            "filter": {
+                                "terms": {
+                                    "url.keyword": self.clicked_urls
+                                }
+                            },
+                            "script_score": {
+                                "script": {
+                                    "source": "_score * 1.2"
                                 }
                             }
                         }],
@@ -193,7 +209,19 @@ class Query:
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.1"
+                                    "source": "_score * 1.2"
+                                }
+                            }
+                        },
+                        {
+                            "filter": {
+                                "terms": {
+                                    "url.keyword": self.clicked_urls
+                                }
+                            },
+                            "script_score": {
+                                "script": {
+                                    "source": "_score * 1.2"
                                 }
                             }
                         }],
@@ -304,7 +332,7 @@ class Query:
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.1"
+                                    "source": "_score * 1.2"
                                 }
                             }
                         }],
@@ -441,10 +469,10 @@ class Query:
                 # 正则表达式查询
                 results = self.regexp_search(query[7:])
                 query = query[7:]
-            elif query[1:10] == 'wildcard':
+            elif query[1:9] == 'wildcard':
                 # 通配符查询
-                results = self.wildcard_search(query[11:])
-                query = query[11:]
+                results = self.wildcard_search(query[10:])
+                query = query[10:]
             elif query[1:5] == 'site':
                 # 站内查询
                 query = query[6:]
@@ -460,7 +488,7 @@ class Query:
                     field = 'content'
                     query = query[9:]
                 else:
-                    print('error')
+                    print('error in field')
                     raise Exception
                 # 获取查询
                 must,must_not,should = self.get_bool_querys(query)
@@ -470,7 +498,7 @@ class Query:
                 elif len(should) != 0:
                     query = should[0]
                 else:
-                    print('error')
+                    print('error in bool search')
                     raise Exception
         elif query[0] == '+' or query[0] == '-' or query[0] == '|':
             # 全位置布尔查询
@@ -481,7 +509,7 @@ class Query:
             elif len(should) != 0:
                 query = should[0]
             else:
-                print('error')
+                print('error in bool search')
                 raise Exception
         else:
             # 普通查询
@@ -510,7 +538,6 @@ if __name__ == "__main__":
     #     elif match[0] == '|':
     #         print(match[1].split(' '))
     query = Query('news')
-    print(query.get_pop_query(5))
-    # results = query.phase_search("越南两位副总理")
-    # for result in results[0:10]:
-    #     print(result['title'], result['url'], result['type'])
+    results = query.basic_search("越南两位副总理")
+    for result in results[0:10]:
+        print(result['title'], result['url'], result['type'])

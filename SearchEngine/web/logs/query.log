@@ -1,3 +1,25 @@
 [2023-12-25 22:53:48]	<basic_search>	python
 [2023-12-25 22:54:44]	<basic_search>	python
 [2023-12-25 22:57:24]	<basic_search>	python
+[2023-12-26 19:31:39]	<basic_search>	python
+[2023-12-26 19:34:12]	<basic_search>	python
+[2023-12-26 19:35:24]	<basic_search>	python
+[2023-12-26 19:35:25]	<basic_search>	python
+[2023-12-26 19:36:13]	<phase_search>	肖申克的救赎
+[2023-12-26 19:37:31]	<bool_search>	[must]:['python']	[mustnot]:[]	[should]:[]	[position]:title
+[2023-12-26 19:38:14]	<site_search>	[url]:douban.com	[query]:肖申克
+[2023-12-26 19:38:14]	<basic_search>	肖申克
+[2023-12-26 19:43:54]	<basic_search>	python
+[2023-12-26 19:44:01]	<wildcard_search>	p?thon
+[2023-12-26 19:44:40]	<regexp_search>	(python)|(java)
+[2023-12-26 19:45:28]	<regexp_search>	肖(.*)
+[2023-12-26 21:11:51]	<basic_search>	python
+[2023-12-26 21:12:00]	<basic_search>	python
+[2023-12-26 21:13:52]	<basic_search>	越南两位副总理
+[2023-12-26 21:13:54]	<basic_search>	越南两位副总理
+[2023-12-26 21:14:24]	<basic_search>	越南两位副总理
+[2023-12-26 21:14:46]	<basic_search>	python
+[2023-12-26 21:15:40]	<basic_search>	python
+[2023-12-26 21:15:46]	<basic_search>	python
+[2023-12-26 21:16:02]	<basic_search>	python
+[2023-12-26 21:16:11]	<basic_search>	python
