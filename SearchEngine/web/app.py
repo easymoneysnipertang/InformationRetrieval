@@ -146,6 +146,7 @@ def handle_click():
     print('用户点击了URL: ' + url)
     # 处理点击
     clicked_urls.append(url)
+    print(clicked_urls)
     global_query.set_urls(clicked_urls)
     # 更新用户信息
     save_user.update_user(global_userid, url)

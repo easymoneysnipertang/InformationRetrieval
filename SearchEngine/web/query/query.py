@@ -112,7 +112,7 @@ class Query:
         response = self.es.search(
             index="web",
             body={
-                "size": 100,
+                "size": 300,
                 "query": {
                     "function_score": {
                         "query": {
@@ -148,19 +148,19 @@ class Query:
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.2"
+                                    "source": "_score * 0.1"
                                 }
                             }
                         },
                         {
                             "filter": {
                                 "terms": {
-                                    "url.keyword": self.clicked_urls
+                                    "url": self.clicked_urls
                                 }
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.2"
+                                    "source": "_score * 0.05"
                                 }
                             }
                         }],
@@ -180,7 +180,7 @@ class Query:
         response = self.es.search(
             index="web",
             body={
-                "size": 100,
+                "size": 300,
                 "query": {
                     "function_score": {
                         "query": {
@@ -209,19 +209,19 @@ class Query:
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.2"
+                                    "source": "_score * 0.1"
                                 }
                             }
                         },
                         {
                             "filter": {
                                 "terms": {
-                                    "url.keyword": self.clicked_urls
+                                    "url": self.clicked_urls
                                 }
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.2"
+                                    "source": "_score * 0.05"
                                 }
                             }
                         }],
@@ -256,7 +256,7 @@ class Query:
         response = self.es.search(
             index="web",
             body={
-                "size" : 100,
+                "size" : 300,
                 "query": {
                     "function_score": {
                         "query": {
@@ -303,7 +303,7 @@ class Query:
         response = self.es.search(
             index="web",
             body={
-                "size" : 100,
+                "size" : 300,
                 "query": {
                     "function_score": {
                         "query": {
@@ -332,7 +332,7 @@ class Query:
                             },
                             "script_score": {
                                 "script": {
-                                    "source": "_score * 1.2"
+                                    "source": "_score * 0.1"
                                 }
                             }
                         }],
@@ -391,7 +391,7 @@ class Query:
         response = self.es.search(
             index="web",
             body={
-                "size" : 100,
+                "size" : 300,
                 "query": {
                     "bool": {
                         "should": [

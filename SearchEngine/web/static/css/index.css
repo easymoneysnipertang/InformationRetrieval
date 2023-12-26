@@ -12,7 +12,11 @@ html{*overflow:auto;}
 .searchList .searchItem.current{color:#0080cc;border-bottom:2px solid #9cc813;font-weight:bold;}
 
 /*input搜索区域*/
-.inputArea{position:relative;margin-bottom:65px;}
+.inputArea{    
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: 65px;
+}
 .inputArea .searchInput{border:1px solid #bfbfbf;padding:0 15px;outline:none;height:40px;*height:39px;*line-height:40px;width:520px; background:url(../img/inputbg.png);font-size:14px;}
 .inputArea .searchButton{position:absolute;left:550px;*left:552px;*top:1px;width:106px;height:42px;*height:41px;background:url(../img/searchbtn.png) no-repeat;border:none;cursor:pointer;}
 /*高级搜索*/

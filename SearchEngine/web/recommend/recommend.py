@@ -67,7 +67,6 @@ class Recommend:
         recommend_querys = [list[i] for i in indices[sorted_indices]]
         return recommend_querys
 
-
     def get_recommend(self,query,pop_query):
         # 获取查询所在的簇
         query_label = self.get_cluster(query)
@@ -77,7 +76,7 @@ class Recommend:
             docs = self.get_cluster_docs(query_label)
             titles = [doc[1] for doc in docs]
             # 计算推荐文档索引
-            recommend_cluster_querys = self.cal_recommend(query,titles,7,0.25)
+            recommend_cluster_querys = self.cal_recommend(query,titles,7,0.2)
         else:
             recommend_querys = self.cal_recommend(query,pop_query,5,0)
             # 获取簇中的文档
