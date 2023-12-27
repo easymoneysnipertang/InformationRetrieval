@@ -180,10 +180,20 @@ for s in should:
 
 #### 5. 模糊查询  -- 查询中包含拼写错误
 在使用es查询时，添加fuzziness参数：
-
 ```python
 "fuzziness": "AUTO"
 ```
+
+并没有将模糊查询直接做为一个高级查询功能提供给用户，而是在每个查询的最后进行判断：如果查询结果太少，就认为用户输入错误，使用模糊查询进行补充  
+
+```python
+if(len(results)<50):
+    fuzz_results = self.fuzz_search(query)
+    for result in fuzz_results:
+        if result not in results:
+            results.append(result)
+```
+
 
 #### 6. 站内查询  -- 指定站点，查询结果只包含指定站点的网页
 对查询结果的url进行过滤，只保留指定站点的网页：
@@ -294,4 +304,14 @@ es进行检索时，使用**用户点击的网页进行过滤**，如果文档�
 - 使用保存的模型将网页标题转为数值向量后，使用`cosine_similarity`计算相似度提取高相似网页
 - 热门搜索同样，将搜索记录转为数值向量后，使用`cosine_similarity`计算相似度提取高相似记录
   
-前面提到，聚类产生了个别异常类。对于属于这些类的查询，提高最终推荐结果中**热门搜索的占比**，簇中网页进行**随机采样计算相似度**，避免长时间计算拖慢搜索引擎速度
+前面提到，聚类产生了个别异常类。对于属于这些类的查询，提高最终推荐结果中**热门搜索的占比**，簇中网页进行**随机采样计算相似度**，避免长时间计算拖慢搜索引擎速度  
+
+下面是一个推荐系统运行的例子，分别搜索`肖申克`和`python`，得到的推荐结果如下：
+<center>
+<table>
+  <tr>
+    <td><img src="pic/recommend1.png" width="450"></td>
+    <td><img src="pic/recommend2.png" width="450"></td>
+  </tr>
+</table>
+</center>

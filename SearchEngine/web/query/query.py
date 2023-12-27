@@ -515,8 +515,8 @@ class Query:
             # 普通查询
             results = self.basic_search(query)
         
-        # 如果结果不足10个，使用模糊查询补充
-        if(len(results)<10):
+        # 如果结果不足，使用模糊查询补充
+        if(len(results)<50):
             fuzz_results = self.fuzz_search(query)
             for result in fuzz_results:
                 if result not in results:

@@ -117,7 +117,7 @@ def result():
             return render_template('error.html',query=query)
     
     # 当前热门查询
-    pop_query = global_query.get_pop_query(20)
+    pop_query = global_query.get_pop_query(100)
 
     # 处理相关搜索
     has_recommend,recommend_query1,recommend_query2 = deal_recommend(query,pop_query)

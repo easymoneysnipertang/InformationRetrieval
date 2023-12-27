@@ -46,6 +46,12 @@
         cursor: pointer;
     }
      
+    #advancedSearchBtn {
+        position: fixed; /* 固定位置 */
+        top: 20px; /* 距离顶部的距离 */
+        left: 20px; /* 距离左侧的距离 */
+    }
+    
     .header {
         position: fixed; /* 固定位置 */
         top: 20px; /* 距离顶部的距离 */
@@ -85,6 +91,8 @@
             </form>
         </div>
     </div>
+
+    <button id="advancedSearchBtn">查询使用说明</button>
 
     <div class="header">
     {% if is_login %}
@@ -188,6 +196,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
         modal.style.display = "none";
     };
 });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // 其他的 JavaScript 代码
+    
+        // 获取新的按钮
+        var btn = document.getElementById("advancedSearchBtn");
+        // 当用户点击新的按钮时，显示对话框
+        btn.onclick = function() {
+            alert("高级查询使用说明：\n" +
+                "\t普通查询: query\n" +
+                "\t短语查询: \"query\"\n" +
+                "\t站内查询: #site:url query\n" +
+                "\t布尔查询: +(query query)-(query query)|(query query)\n" +
+                "\t位置查询: #tilte:(query)  #content:(query)\n" +
+                "\t正则表达式查询 #regex:query\n" +
+                "\t通配符查询: #wildcard:query");
+        };
+    });
 </script>
 
 </html>
